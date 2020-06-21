@@ -1,10 +1,29 @@
 #importing modules
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import matplotlib.dates as mdates
+
+
+
+
+def unique(arr):
+    result = []
+    for i in arr:
+        if i not in result:
+            result.append(i)
+    return result
+
+
+def cases_stat(place,placeArray,caseArray):
+        if place in placeArray:
+            return caseArray[placeArray.index(place)]
+        else: 
+            return 0   
+
+
+
 
 #Download csv file:
 #Getting csv data into a pandas dataframe
@@ -72,3 +91,29 @@ for date in dates:
 start = pd.to_datetime(dates[0])
 end = pd.to_datetime(dates[len(dates) - 1])
 dates = pd.date_range(start, end, periods= len(dates))
+
+
+
+
+plt.figure(figsize=(15,10))
+plt.plot(dates,ontario,'b-',label="Ontario")
+plt.plot(dates,bc,'g-',label="British Columbia")
+plt.plot(dates,pei,'r-',label="Prince Edward Island")
+plt.plot(dates,ns,'c-',label="Nova Scotia")
+plt.plot(dates,nb,'m-',label="New Brunswick")
+plt.plot(dates,quebec,'y-',label="Quebec")
+plt.plot(dates,manitoba,'k-',label="Manitoba")
+plt.plot(dates,saskatchewan,'b-',label="Saskatchewan")
+plt.plot(dates,alberta,'b-',label="Alberta")
+plt.plot(dates,nfld,'k-',label="Newfoundland and Labrador")
+plt.plot(dates,yukon,'b-',label="Yukon")
+plt.plot(dates,nt,'r-',label="Northwest Territories")
+plt.plot(dates,nunavut,'b-',label="Nunavut")
+plt.plot(dates,rt,'b-',label="Repatriated Travellers")
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b-%y'))
+plt.xlabel("Dates", fontsize="14")
+plt.ylabel("Number of Cases", fontsize="14")
+plt.legend()
+plt.grid()
+plt.title("Number of Total Cases in Each Provinces", fontsize="20", color="blue")
+plt.show()
