@@ -64,3 +64,11 @@ for date in dates:
         
     places.clear()
     cases.clear()
+
+
+
+
+# set start and end date
+start = pd.to_datetime(dates[0])
+end = pd.to_datetime(dates[len(dates) - 1])
+dates = pd.date_range(start, end, periods= len(dates))
