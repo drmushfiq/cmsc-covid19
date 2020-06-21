@@ -2,6 +2,11 @@ import sys
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import matplotlib.dates as mdates
+
+
+
 
 def unique(arr):
     result = []
@@ -9,6 +14,29 @@ def unique(arr):
         if i not in result:
             result.append(i)
     return result
+
+
+def case_stats(place,placeArray,caseArray):
+        if place in placeArray:
+            return caseArray[placeArray.index(place)]
+        else: 
+            return 0    
+
+
+def update(num, x, y, line):
+    line.set_data(x[:num], y[:num])
+    return line,
+
+
+def animatePlot(xArray,yArray):
+    fig, ax = plt.subplots()
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b-%y'))
+    line, = ax.plot(xArray, yArray, 'b-')
+    animation.FuncAnimation(fig, update, len(xArray), fargs=[xArray, yArray, line], interval=20, blit=True, repeat=False)
+    plt.show()
+
+
+
 
 #Download csv file:
 #getting csv data into a pandas dataframe
@@ -34,20 +62,22 @@ nunavut = []
 rt = []
 canada = []
 
+
+places = []
+cases = []
 c = 0
 numberOfRows = len(casesPerDay)
 for date in dates:
-    placesHaveCases = []
-    casesOfPlaces = []
     for cpd in range(c,numberOfRows,1):
         if casesPerDay['date'][c] == date:
-            placesHaveCases.append(casesPerDay['prname'][c].lower())
-            casesOfPlaces.append(casesPerDay['numtotal'][c])
+            places.append(casesPerDay['prname'][c].lower())
+            cases.append(casesPerDay['numtotal'][c])
             c+=1
         else:
             break
     
-# Fill province arrays with total cases in respective provinces
+    
+    # Fill province arrays with total cases in respective provinces
     ontario.append(case_stats("ontario",places,cases))
     bc.append(case_stats("british columbia",places,cases))
     pei.append(case_stats("prince edward island",places,cases))
@@ -66,3 +96,29 @@ for date in dates:
         
     places.clear()
     cases.clear()
+    
+
+# set start and end date
+start = pd.to_datetime(dates[0])
+end = pd.to_datetime(dates[len(dates) - 1])
+dates = pd.date_range(start, end, periods= len(dates))
+
+            
+animatePlot(dates,ontario)
+animatePlot(dates,bc)
+animatePlot(dates,pei)
+animatePlot(dates,ns)
+animatePlot(dates,nb)
+animatePlot(dates,quebec)                
+animatePlot(dates,manitoba)
+animatePlot(dates,saskatchewan)
+animatePlot(dates,alberta)
+animatePlot(dates,nfld)
+animatePlot(dates,yukon)
+animatePlot(dates,nt)
+animatePlot(dates,nunavut)
+animatePlot(dates,rt)
+
+
+
+
