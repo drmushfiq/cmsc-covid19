@@ -28,10 +28,10 @@ def cases_stat(place,placeArray,caseArray):
 #Download csv file:
 #Getting csv data into a pandas dataframe
 data = pd.read_csv('https://health-infobase.canada.ca/src/data/covidLive/covid19.csv',sep=',')
-
 dates = unique(data['date'])
-
-casesPerDay = data[['prname', 'date', 'numtotal']]
+totalCases = data[['prname', 'date', 'numtotal']]
+testedPerDay = data[['prname', 'date', 'numtested']]
+caseToday = data[['prname', 'date', 'numtoday']]
 
 # Declare arrays for each province
 ontario = []
@@ -50,15 +50,19 @@ nunavut = []
 rt = []
 canada = []
 
+
+
+
+testedPerDay = data[['prname', 'date', 'numtested']]
+places = []
+cases = []
 c = 0
-numberOfRows = len(casesPerDay)
+numberOfRows = len(testedPerDay)
 for date in dates:
-    places = []
-    cases = []
-    for cpd in range(c,numberOfRows,1):
-        if casesPerDay['date'][c] == date:
-            places.append(casesPerDay['prname'][c].lower())
-            cases.append(casesPerDay['numtotal'][c])
+    for tpd in range(c,numberOfRows,1):
+        if testedPerDay['date'][c] == date:
+            places.append(testedPerDay['prname'][c].lower())
+            cases.append(testedPerDay['numtested'][c])
             c+=1
         else:
             break
@@ -83,18 +87,15 @@ for date in dates:
         
     places.clear()
     cases.clear()
-
-
-
+    
 
 # set start and end date
 start = pd.to_datetime(dates[0])
 end = pd.to_datetime(dates[len(dates) - 1])
 dates = pd.date_range(start, end, periods= len(dates))
+                    
 
-
-
-
+# plot results of provinces
 plt.figure(figsize=(15,10))
 plt.plot(dates,ontario,'b-',label="Ontario")
 plt.plot(dates,bc,'g-',label="British Columbia")
@@ -112,8 +113,8 @@ plt.plot(dates,nunavut,'b-',label="Nunavut")
 plt.plot(dates,rt,'b-',label="Repatriated Travellers")
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b-%y'))
 plt.xlabel("Dates", fontsize="14")
-plt.ylabel("Number of Cases", fontsize="14")
+plt.ylabel("Number of Tests", fontsize="14")
 plt.legend()
 plt.grid()
-plt.title("Number of Total Cases in Each Provinces", fontsize="20", color="blue")
+plt.title("Number of Test Cases in Each Provinces", fontsize="20", color="blue")
 plt.show()
