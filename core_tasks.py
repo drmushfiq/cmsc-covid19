@@ -114,6 +114,8 @@ plt.plot(dates,rt,'b-',label="Repatriated Travellers")
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b-%y'))
 plt.xlabel("Dates", fontsize="14")
 plt.ylabel("Number of Tests", fontsize="14")
+
+plt.gcf().axes[0].yaxis.get_major_formatter().set_scientific(False)
 plt.legend()
 plt.grid()
 plt.title("Number of Test Cases in Each Provinces", fontsize="20", color="blue")
