@@ -91,14 +91,20 @@ else:
 #storing the outputs into a file
 if(os.path.exists("storage.txt")): #checking if file already exists
 	with open('storage.txt', 'a') as f: #if it exists opening with append
-		f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(doublingDays)) #storing necessary info
+		if(casesOrDeath=='cases'): #checking if input is cases or deaths
+			f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(rowOfGivenDate['numtotal'])+","+str(doublingDays)) #storing necessary info
+		else: 
+			f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(rowOfGivenDate['numdeaths'])+","+str(doublingDays)) #storing necessary info
 		f.write("\n")
 		f.close()
 else:
 	with open('storage.txt', 'w+') as f: #if file doesnt exist creating file
-		f.write("date,province,cases/deaths,days to double") #adding columns on top of the file
+		f.write("date,province,cases/deaths,total,days_to_double") #adding columns on top of the file
 		f.write("\n")
-		f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(doublingDays)) #storing necessary info
+		if(casesOrDeath=='cases'): #checking if input is cases or deaths
+			f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(rowOfGivenDate['numtotal'])+","+str(doublingDays)) #storing necessary info
+		else: 
+			f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(rowOfGivenDate['numdeaths'])+","+str(doublingDays)) #storing necessary info
 		f.write("\n")
 		f.close()
 	

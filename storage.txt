@@ -1,4 +1,4 @@
-date,province,cases/deaths,days to double
-25-05-2020,Ontario,deaths,77
-25-05-2020,Ontario,cases,64
-25-05-2020,Newfoundland and Labrador,cases,0
+date,province,cases/deaths,total,days_to_double
+25-05-2020,Ontario,cases,25904,64
+25-05-2020,Ontario,deaths,2102.0,77
+26-05-2020,British Columbia,cases,2541,207
