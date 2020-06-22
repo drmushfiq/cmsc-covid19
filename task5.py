@@ -10,6 +10,8 @@ import os
 from datetime import datetime
 
 
+#------------------------------------DATA PREP AND EXCEPTION HANDLING----------------------------------------#
+
 #Download csv file:
 #Getting csv data into a pandas dataframe
 data = pd.read_csv('https://health-infobase.canada.ca/src/data/covidLive/covid19.csv',sep=',')
@@ -47,14 +49,39 @@ elif(province.upper()=='NT'):
 	province='Northwest Territories'
 elif(province.upper()=='NU'):
 	province='Nunavut'
+else:
+	print("Invalid Province Code Entered. Try again with proper province code please (e.g. NL, ON, NB etc)")
+	exit(0)
 
 
 provinceDF=data.loc[data['prname'] == province] #creating a dataframe consisting only the rows of the given province
 provinceDF=provinceDF.reset_index() #resetting the index of the new dataframe
 
-indexOfGivenDate=provinceDF.index[provinceDF.date == date].tolist()[0] #saving the index number of the given date's row so that it can be iterated.
-rowOfGivenDate=provinceDF.iloc[indexOfGivenDate] #getting the row of the given date in a variable
-sevenDaysDF=provinceDF.iloc[indexOfGivenDate-7:indexOfGivenDate] #creating a separate dataframe with the rows of 7days
+provinceDF['date']=provinceDF['date'].replace(['/'], '-') #converting all dates to the same format
+
+#Exception handling for invalid dates.
+try:
+	indexOfGivenDate=provinceDF.index[provinceDF.date == date].tolist()[0] #saving the index number of the given date's row so that it can be iterated.
+	rowOfGivenDate=provinceDF.iloc[indexOfGivenDate] #getting the row of the given date in a variable
+	sevenDaysDF=provinceDF.iloc[indexOfGivenDate-7:indexOfGivenDate] #creating a separate dataframe with the rows of 7days
+except IndexError:
+	print("Given date doesnt exist in the data. Please make sure date format is dd-mm-yyyy")
+	exit(0)
+
+#Exception handling for invalid cases/deaths.
+if(str(casesOrDeath)=="cases" or str(casesOrDeath)=="deaths"): #checking valid inputs
+	print("calculating "+casesOrDeath+" for "+province+" on "+date)
+else:	
+	print("Invalid input. Write 'cases' to get doubling days for case or write 'deaths' to get doublind days for deaths.")
+	exit(0)
+
+
+#------------------------------------DATA PREP AND EXCEPTION HANDLING END---------------------------------------#
+
+
+
+#-----------------------------------------FUNCTIONS-----------------------------------------------#
+
 
 #the function takes a dataframe as an input and returns average increase of the last 7days
 def average(DF):
@@ -71,6 +98,7 @@ def average(DF):
 		avg=avg/len(sevenDaysDF) #getting the average of the increase case/death in past 7days from the given date
 	return avg
 
+
 #the function calculates the doubling days from the average and the current number of cases/deaths of the given date
 def predictDoublingDays(avg, currentNumber):
 	if(avg==0): #checking if avg is 0
@@ -81,6 +109,13 @@ def predictDoublingDays(avg, currentNumber):
 	return int(round(currentNumber/avg))
 
 
+#--------------------------------------FUNCTIONS END---------------------------------------------#
+
+
+
+
+#--------------------------------------DIVER PROGRAM---------------------------------------------#
+
 avg=average(sevenDaysDF) #getting the average
 if(casesOrDeath=='cases'): #checking if input is cases or deaths
 	doublingDays=predictDoublingDays(avg,int(rowOfGivenDate['numtotal'])) #getting the doubling days of cases from the function
@@ -88,23 +123,31 @@ else:
 	doublingDays=predictDoublingDays(avg,int(rowOfGivenDate['numdeaths'])) #getting the doubling days of deaths from the function
 
 
+#--------------------------------------DIVER PROGRAM END----------------------------------------#
+
+
+
+
+#-----------------------------------------STORAGE-----------------------------------------------#
+
 #storing the outputs into a file
 if(os.path.exists("storage.txt")): #checking if file already exists
 	with open('storage.txt', 'a') as f: #if it exists opening with append
 		if(casesOrDeath=='cases'): #checking if input is cases or deaths
-			f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(rowOfGivenDate['numtotal'])+","+str(doublingDays)) #storing necessary info
+			f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(rowOfGivenDate['numtotal'])+","+str(int(round(avg)))+","+str(doublingDays)) #storing necessary info
 		else: 
-			f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(rowOfGivenDate['numdeaths'])+","+str(doublingDays)) #storing necessary info
+			f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(rowOfGivenDate['numdeaths'])+","+str(int(round(avg)))+","+str(doublingDays)) #storing necessary info
 		f.write("\n")
 		f.close()
 else:
 	with open('storage.txt', 'w+') as f: #if file doesnt exist creating file
-		f.write("date,province,cases/deaths,total,days_to_double") #adding columns on top of the file
+		f.write("date,province,cases/deaths,total,rate_of_spread,days_to_double") #adding columns on top of the file
 		f.write("\n")
 		if(casesOrDeath=='cases'): #checking if input is cases or deaths
-			f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(rowOfGivenDate['numtotal'])+","+str(doublingDays)) #storing necessary info
+			f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(rowOfGivenDate['numtotal'])+","+str(int(round(avg)))+","+str(doublingDays)) #storing necessary info
 		else: 
-			f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(rowOfGivenDate['numdeaths'])+","+str(doublingDays)) #storing necessary info
+			f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(rowOfGivenDate['numdeaths'])+","+str(int(round(avg)))+","+str(doublingDays)) #storing necessary info
 		f.write("\n")
 		f.close()
 	
+#--------------------------------------STORAGE END---------------------------------------------#
