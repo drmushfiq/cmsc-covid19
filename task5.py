@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import matplotlib.dates as mdates
 import sys
+import os
 from datetime import datetime
 
 
@@ -41,14 +42,30 @@ def average(DF):
 #the function calculates the doubling days from the average and the current number of cases/deaths of the given date
 def predictDoublingDays(avg, currentNumber):
 	doublingDays=int(round(currentNumber/avg)) #calculating how many days it will take for the the number to double
-	if (doublingDays==0): #checking if the doubling days is 0 in which case it will say it takes 1day to double
-		doublingDays=1
-
+	if (doublingDays==0): #checking if the doubling days is 0 
+		doublingDays=1 #if the doubling days is 0 it should say it takes 1day to double
 	return int(round(currentNumber/avg))
 
 
 avg=average(sevenDaysDF) #getting the average
-doublingDays=predictDoublingDays(avg,int(a['numdeaths'])) #getting the doubling days from the function
 
-print("avg:", avg)
-print("doubling days:", doublingDays)
+if(casesOrDeath=='cases'):
+	doublingDays=predictDoublingDays(avg,int(rowOfGivenDate['numtotal'])) #getting the doubling days of cases from the function
+else:
+	doublingDays=predictDoublingDays(avg,int(rowOfGivenDate['numdeaths'])) #getting the doubling days of deaths from the function
+
+
+#storing the outputs into a file
+if(os.path.exists("storage.txt")): #checking if file already exists
+	with open('storage.txt', 'a') as f: #if it exists opening with append
+		f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(doublingDays)) #storing necessary info
+		f.write("\n")
+		f.close()
+else:
+	with open('storage.txt', 'w+') as f: #if file doesnt exist creating file
+		f.write("date,province,cases/deaths,days to double") #adding columns on top of the file
+		f.write("\n")
+		f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(doublingDays)) #storing necessary info
+		f.write("\n")
+		f.close()
+	
