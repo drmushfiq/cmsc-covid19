@@ -3,6 +3,5 @@ date,province,cases/deaths,total,rate_of_spread,days_to_double
 21-04-2020,Ontario,death,622.0,42,15
 31-03-2020,British Columbia,cases,970,70,14
 29-03-2020,Alberta,cases,621,45,14
-27-03-2020,Newfoundland and Labrador,cases,102,11,9
 08-05-2020,Quebec,cases,36150,1100,33
 08-05-2020,Quebec,deaths,2725.0,110,25
