@@ -31,6 +31,20 @@ def cases_stat(place,placeArray,caseArray,cutoff=0):
         return 0   
 
 
+def set_cutoff(arr, cutoff):
+	foundCutoff = False
+	result = []
+	for i in arr:
+		if i < cutoff:
+			if foundCutoff == False:
+				result.append(0)
+			else:
+				result.append(i)
+		else:
+			result.append(i)
+	return result
+
+
 
 
 #Download csv file:
@@ -71,21 +85,21 @@ for date in dates:
     
     
     # Fill province arrays with total cases in respective provinces
-    ontario.append(cases_stat("ontario", places, cases, 100))
-    bc.append(cases_stat("british columbia", places, cases, 30))
-    pei.append(cases_stat("prince edward island", places, cases, 15))
-    ns.append(cases_stat("nova scotia", places, cases, 10))
-    nb.append(cases_stat("new brunswick", places, cases, 10))
-    quebec.append(cases_stat("quebec", places, cases, 70))
-    manitoba.append(cases_stat("manitoba", places, cases, 2))
-    saskatchewan.append(cases_stat("saskatchewan", places, cases, 4))
-    alberta.append(cases_stat("alberta", places, cases, 10))
-    nfld.append(cases_stat("newfoundland and labrador", places, cases, 5))
-    yukon.append(cases_stat("yukon", places, cases, 2))
-    nt.append(cases_stat("northwest territories", places, cases, 2))
-    nunavut.append(cases_stat("nunavut", places, cases, 0))
-    rt.append(cases_stat("repatriated travellers", places, cases, 3))
-    canada.append(cases_stat("canada", places, cases, 40))
+    ontario.append(cases_stat("ontario", places, cases))
+    bc.append(cases_stat("british columbia", places, cases))
+    pei.append(cases_stat("prince edward island", places, cases))
+    ns.append(cases_stat("nova scotia", places, cases))
+    nb.append(cases_stat("new brunswick", places, cases))
+    quebec.append(cases_stat("quebec", places, cases))
+    manitoba.append(cases_stat("manitoba", places, cases))
+    saskatchewan.append(cases_stat("saskatchewan", places, cases))
+    alberta.append(cases_stat("alberta", places, cases))
+    nfld.append(cases_stat("newfoundland and labrador", places, cases))
+    yukon.append(cases_stat("yukon", places, cases))
+    nt.append(cases_stat("northwest territories", places, cases))
+    nunavut.append(cases_stat("nunavut", places, cases))
+    rt.append(cases_stat("repatriated travellers", places, cases))
+    canada.append(cases_stat("canada", places, cases))
         
     places.clear()
     cases.clear()
@@ -95,6 +109,24 @@ for date in dates:
 start = pd.to_datetime(dates[0])
 end = pd.to_datetime(dates[len(dates) - 1])
 dates = pd.date_range(start, end, periods= len(dates))
+
+
+# setting cutoff points
+ontario = set_cutoff(ontario, 100)
+bc = set_cutoff(bc, 30)
+pei = set_cutoff(pei, 15)
+ns = set_cutoff(ns, 10)
+nb = set_cutoff(nb, 10)
+quebec = set_cutoff(quebec, 70)
+manitoba = set_cutoff(manitoba, 2)
+saskatchewan = set_cutoff(saskatchewan, 4)
+alberta = set_cutoff(alberta, 10)
+nfld = set_cutoff(nfld, 5)
+yukon = set_cutoff(yukon, 2)
+nt = set_cutoff(nt, 2)
+nunavut = set_cutoff(nunavut, 0)
+rt = set_cutoff(rt, 3)
+canada = set_cutoff(canada, 40)
                     
 
 # plot results of provinces
