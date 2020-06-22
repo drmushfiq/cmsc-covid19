@@ -1,6 +1,8 @@
 #importing modules
+import sys
 import pandas as pd
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import matplotlib.dates as mdates
@@ -16,11 +18,17 @@ def unique(arr):
     return result
 
 
-def cases_stat(place,placeArray,caseArray):
-        if place in placeArray:
-            return caseArray[placeArray.index(place)]
-        else: 
-            return 0   
+def cases_stat(place,placeArray,caseArray,cutoff=0):
+    if place in placeArray:
+        if math.isnan(caseArray[placeArray.index(place)]):
+            return 0
+        else:
+            if caseArray[placeArray.index(place)] >= cutoff:
+                return caseArray[placeArray.index(place)]
+            else:
+                return 0
+    else: 
+        return 0   
 
 
 
@@ -29,8 +37,6 @@ def cases_stat(place,placeArray,caseArray):
 #Getting csv data into a pandas dataframe
 data = pd.read_csv('https://health-infobase.canada.ca/src/data/covidLive/covid19.csv',sep=',')
 dates = unique(data['date'])
-totalCases = data[['prname', 'date', 'numtotal']]
-testedPerDay = data[['prname', 'date', 'numtested']]
 caseToday = data[['prname', 'date', 'numtoday']]
 
 # Declare arrays for each province
@@ -50,40 +56,36 @@ nunavut = []
 rt = []
 canada = []
 
-
-
-
-testedPerDay = data[['prname', 'date', 'numtested']]
-places = []
-cases = []
 c = 0
-numberOfRows = len(testedPerDay)
+numberOfRows = len(caseToday)
 for date in dates:
-    for tpd in range(c,numberOfRows,1):
-        if testedPerDay['date'][c] == date:
-            places.append(testedPerDay['prname'][c].lower())
-            cases.append(testedPerDay['numtested'][c])
+    places = []
+    cases = []
+    for ct in range(c,numberOfRows,1):
+        if caseToday['date'][c] == date:
+            places.append(caseToday['prname'][c].lower())
+            cases.append(caseToday['numtoday'][c])
             c+=1
         else:
             break
     
     
     # Fill province arrays with total cases in respective provinces
-    ontario.append(cases_stat("ontario", places, cases))
-    bc.append(cases_stat("british columbia", places, cases))
-    pei.append(cases_stat("prince edward island", places, cases))
-    ns.append(cases_stat("nova scotia", places, cases))
-    nb.append(cases_stat("new brunswick", places, cases))
-    quebec.append(cases_stat("quebec", places, cases))
-    manitoba.append(cases_stat("manitoba", places, cases))
-    saskatchewan.append(cases_stat("saskatchewan", places, cases))
-    alberta.append(cases_stat("alberta", places, cases))
-    nfld.append(cases_stat("newfoundland and labrador", places, cases))
-    yukon.append(cases_stat("yukon", places, cases))
-    nt.append(cases_stat("northwest territories", places, cases))
-    nunavut.append(cases_stat("nunavut", places, cases))
-    rt.append(cases_stat("repatriated travellers", places, cases))
-    canada.append(cases_stat("canada", places, cases))
+    ontario.append(cases_stat("ontario", places, cases, 100))
+    bc.append(cases_stat("british columbia", places, cases, 30))
+    pei.append(cases_stat("prince edward island", places, cases, 15))
+    ns.append(cases_stat("nova scotia", places, cases, 10))
+    nb.append(cases_stat("new brunswick", places, cases, 10))
+    quebec.append(cases_stat("quebec", places, cases, 70))
+    manitoba.append(cases_stat("manitoba", places, cases, 2))
+    saskatchewan.append(cases_stat("saskatchewan", places, cases, 4))
+    alberta.append(cases_stat("alberta", places, cases, 10))
+    nfld.append(cases_stat("newfoundland and labrador", places, cases, 5))
+    yukon.append(cases_stat("yukon", places, cases, 2))
+    nt.append(cases_stat("northwest territories", places, cases, 2))
+    nunavut.append(cases_stat("nunavut", places, cases, 0))
+    rt.append(cases_stat("repatriated travellers", places, cases, 3))
+    canada.append(cases_stat("canada", places, cases, 40))
         
     places.clear()
     cases.clear()
@@ -111,12 +113,10 @@ plt.plot(dates,yukon,'b-',label="Yukon")
 plt.plot(dates,nt,'r-',label="Northwest Territories")
 plt.plot(dates,nunavut,'b-',label="Nunavut")
 plt.plot(dates,rt,'b-',label="Repatriated Travellers")
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b-%y'))
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d-%b-%y'))
 plt.xlabel("Dates", fontsize="14")
-plt.ylabel("Number of Tests", fontsize="14")
-
-plt.gcf().axes[0].yaxis.get_major_formatter().set_scientific(False)
+plt.ylabel("Number of New Cases", fontsize="14")
 plt.legend()
 plt.grid()
-plt.title("Number of Test Cases in Each Provinces", fontsize="20", color="blue")
+plt.title("Number of New Cases in Each Provinces", fontsize="20", color="blue")
 plt.show()
