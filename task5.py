@@ -20,12 +20,41 @@ casesOrDeath=sys.argv[2].lower()
 date=str(sys.argv[3])
 
 
+#converting province code from arguments init province name
+if(province.upper()=='NL'):
+	province='Newfoundland and Labrador'
+elif(province.upper()=='PE'):
+	province='Prince Edward Island'
+elif(province.upper()=='NS'):
+	province='Nova Scotia'
+elif(province.upper()=='NB'):
+	province='New Brunswick'
+elif(province.upper()=='QC'):
+	province='Quebec'
+elif(province.upper()=='ON'):
+	province='Ontario'
+elif(province.upper()=='MB'):
+	province='Manitoba'
+elif(province.upper()=='SK'):
+	province='Saskatchewan'
+elif(province.upper()=='AB'):
+	province='Alberta'
+elif(province.upper()=='YT'):
+	province='Yukon'
+elif(province.upper()=='BC'):
+	province='British Columbia'
+elif(province.upper()=='NT'):
+	province='Northwest Territories'
+elif(province.upper()=='NU'):
+	province='Nunavut'
+
+
 provinceDF=data.loc[data['prname'] == province] #creating a dataframe consisting only the rows of the given province
 provinceDF=provinceDF.reset_index() #resetting the index of the new dataframe
 
 indexOfGivenDate=provinceDF.index[provinceDF.date == date].tolist()[0] #saving the index number of the given date's row so that it can be iterated.
 rowOfGivenDate=provinceDF.iloc[indexOfGivenDate] #getting the row of the given date in a variable
-sevenDaysDF=provinceDF.iloc[indexOfGivenDate-7:indexOfGivenDate] #creating a separate dataframe with the rows of 7days before the given date
+sevenDaysDF=provinceDF.iloc[indexOfGivenDate-7:indexOfGivenDate] #creating a separate dataframe with the rows of 7days
 
 #the function takes a dataframe as an input and returns average increase of the last 7days
 def average(DF):
@@ -36,20 +65,24 @@ def average(DF):
 			avg=avg+row['numtoday'] #sum of total case increase each day
 		else:
 			avg=avg+row['deathstoday'] #sum of total death increase each day
-	avg=avg/len(sevenDaysDF) #getting the average of the increase case/death in past 7days from the given date
+	if(avg==0): #checking if average 0
+		avg=0 #setting to zero 
+	else:
+		avg=avg/len(sevenDaysDF) #getting the average of the increase case/death in past 7days from the given date
 	return avg
 
 #the function calculates the doubling days from the average and the current number of cases/deaths of the given date
 def predictDoublingDays(avg, currentNumber):
-	doublingDays=int(round(currentNumber/avg)) #calculating how many days it will take for the the number to double
+	if(avg==0): #checking if avg is 0
+		return 0 #if avg is 0 that means it hasnt increased at all in 7days so at that rate it wont ever double up
+	doublingDays=int(round(currentNumber/avg)) #calculating how many days it will take to double up
 	if (doublingDays==0): #checking if the doubling days is 0 
 		doublingDays=1 #if the doubling days is 0 it should say it takes 1day to double
 	return int(round(currentNumber/avg))
 
 
 avg=average(sevenDaysDF) #getting the average
-
-if(casesOrDeath=='cases'):
+if(casesOrDeath=='cases'): #checking if input is cases or deaths
 	doublingDays=predictDoublingDays(avg,int(rowOfGivenDate['numtotal'])) #getting the doubling days of cases from the function
 else:
 	doublingDays=predictDoublingDays(avg,int(rowOfGivenDate['numdeaths'])) #getting the doubling days of deaths from the function
