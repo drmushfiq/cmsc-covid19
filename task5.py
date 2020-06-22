@@ -75,6 +75,10 @@ else:
 	print("Invalid input. Write 'cases' to get doubling days for case or write 'deaths' to get doublind days for deaths.")
 	exit(0)
 
+if(casesOrDeath=='cases'): #checking weather to get case rate or death rate
+	caseOrDeathTotal=rowOfGivenDate['numtotal'] #sum of total case increase each day
+else:
+	caseOrDeathTotal=rowOfGivenDate['numdeaths'] #sum of total death increase each day
 
 #------------------------------------DATA PREP AND EXCEPTION HANDLING END---------------------------------------#
 
@@ -117,10 +121,7 @@ def predictDoublingDays(avg, currentNumber):
 #--------------------------------------DIVER PROGRAM---------------------------------------------#
 
 avg=average(sevenDaysDF) #getting the average
-if(casesOrDeath=='cases'): #checking if input is cases or deaths
-	doublingDays=predictDoublingDays(avg,int(rowOfGivenDate['numtotal'])) #getting the doubling days of cases from the function
-else:
-	doublingDays=predictDoublingDays(avg,int(rowOfGivenDate['numdeaths'])) #getting the doubling days of deaths from the function
+doublingDays=predictDoublingDays(avg,int(caseOrDeathTotal)) #getting the doubling days of cases from the function
 
 
 #--------------------------------------DIVER PROGRAM END----------------------------------------#
@@ -133,20 +134,14 @@ else:
 #storing the outputs into a file
 if(os.path.exists("storage.txt")): #checking if file already exists
 	with open('storage.txt', 'a') as f: #if it exists opening with append
-		if(casesOrDeath=='cases'): #checking if input is cases or deaths
-			f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(rowOfGivenDate['numtotal'])+","+str(int(round(avg)))+","+str(doublingDays)) #storing necessary info
-		else: 
-			f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(rowOfGivenDate['numdeaths'])+","+str(int(round(avg)))+","+str(doublingDays)) #storing necessary info
+		f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(caseOrDeathTotal)+","+str(int(round(avg)))+","+str(doublingDays)) #storing necessary info
 		f.write("\n")
 		f.close()
 else:
 	with open('storage.txt', 'w+') as f: #if file doesnt exist creating file
 		f.write("date,province,cases/deaths,total,rate_of_spread,days_to_double") #adding columns on top of the file
 		f.write("\n")
-		if(casesOrDeath=='cases'): #checking if input is cases or deaths
-			f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(rowOfGivenDate['numtotal'])+","+str(int(round(avg)))+","+str(doublingDays)) #storing necessary info
-		else: 
-			f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(rowOfGivenDate['numdeaths'])+","+str(int(round(avg)))+","+str(doublingDays)) #storing necessary info
+		f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(caseOrDeathTotal)+","+str(int(round(avg)))+","+str(doublingDays)) #storing necessary info
 		f.write("\n")
 		f.close()
 	
