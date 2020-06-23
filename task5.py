@@ -87,31 +87,50 @@ else:
 #-----------------------------------------FUNCTIONS-----------------------------------------------#
 
 
-#the function takes a dataframe as an input and returns average increase of the last 7days
-def average(DF):
-	avg=0 #setting an initial value of avg variable.
+#the function calculates how much more or less cases/deaths are increasing compared to the previous day for 7days
+def averageIncrease():
+	currentTotal=provinceDF.iloc[indexOfGivenDate-8] #setting total of the given date to a variable
+	if(casesOrDeath=='cases'): #checking if the input is cases or deaths
+		currentTotal=currentTotal['numtoday']
+	else:
+		currentTotal=currentTotal['deathstoday']
+
+	increaseRate=0 #setting an initial value of increaseRate variable.
 
 	for i, row in sevenDaysDF.iterrows(): #loop to iterate over 7days of data
 		if(casesOrDeath=='cases'): #checking weather to get case rate or death rate
-			avg=avg+row['numtoday'] #sum of total case increase each day
+			increaseRate=increaseRate+(row['numtoday']-currentTotal)
+			currentTotal=row['numtoday']
 		else:
-			avg=avg+row['deathstoday'] #sum of total death increase each day
-	if(avg==0): #checking if average 0
-		avg=0 #setting to zero 
+			increaseRate=increaseRate+(row['deathstoday']-currentTotal)
+			currentTotal=row['deathstoday']
+	if(increaseRate==0): #checking if average 0
+		increaseRate=0 #setting to zero 
 	else:
-		avg=avg/len(sevenDaysDF) #getting the average of the increase case/death in past 7days from the given date
-	return avg
+		increaseRate=increaseRate/len(sevenDaysDF) #getting the average of the increase case/death in past 7days from the given date
+	return int(round(increaseRate))
 
 
-#the function calculates the doubling days from the average and the current number of cases/deaths of the given date
-def predictDoublingDays(avg, currentNumber):
-	if(avg==0): #checking if avg is 0
-		return 0 #if avg is 0 that means it hasnt increased at all in 7days so at that rate it wont ever double up
-	doublingDays=int(round(currentNumber/avg)) #calculating how many days it will take to double up
-	if (doublingDays==0): #checking if the doubling days is 0 
-		doublingDays=1 #if the doubling days is 0 it should say it takes 1day to double
-	return int(round(currentNumber/avg))
 
+#the function calculates the doubling days from the increase rate and the current number of cases/deaths of the given date
+def predictDoublingDays(increaseRate, total):
+	#setting initial values
+	days=0 
+	currentNew=provinceDF.iloc[indexOfGivenDate] 
+	currentTotal=total
+
+	if(casesOrDeath=='cases'): #checking weather to get case rate or death rate
+		currentNew=currentNew['numtoday']
+	else:
+		currentNew=currentNew['deathstoday']
+	
+	#loop to iterate until cases/deaths double up
+	while currentTotal < total*2:
+		currentNew=currentNew+increaseRate #adding new case/death of previous day plus average increase rate.
+		currentTotal=currentTotal+currentNew #adding the new predicted with the total case
+		days=days+1 #if its not doubled yet than it will add 1 to the days
+	
+	return days
 
 #--------------------------------------FUNCTIONS END---------------------------------------------#
 
@@ -120,9 +139,9 @@ def predictDoublingDays(avg, currentNumber):
 
 #--------------------------------------DIVER PROGRAM---------------------------------------------#
 
-avg=average(sevenDaysDF) #getting the average
-doublingDays=predictDoublingDays(avg,int(caseOrDeathTotal)) #getting the doubling days of cases from the function
-
+increaseRate=averageIncrease() #getting the average
+doublingDays=predictDoublingDays(increaseRate,int(caseOrDeathTotal)) #getting the doubling days of cases from the function
+print("Days to double:", doublingDays) #showing output
 
 #--------------------------------------DIVER PROGRAM END----------------------------------------#
 
@@ -134,15 +153,16 @@ doublingDays=predictDoublingDays(avg,int(caseOrDeathTotal)) #getting the doublin
 #storing the outputs into a file
 if(os.path.exists("storage.txt")): #checking if file already exists
 	with open('storage.txt', 'a') as f: #if it exists opening with append
-		f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(caseOrDeathTotal)+","+str(int(round(avg)))+","+str(doublingDays)) #storing necessary info
+		f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(caseOrDeathTotal)+","+str(int(round(increaseRate)))+","+str(doublingDays)) #storing necessary info
 		f.write("\n")
 		f.close()
 else:
 	with open('storage.txt', 'w+') as f: #if file doesnt exist creating file
 		f.write("date,province,cases/deaths,total,rate_of_spread,days_to_double") #adding columns on top of the file
 		f.write("\n")
-		f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(caseOrDeathTotal)+","+str(int(round(avg)))+","+str(doublingDays)) #storing necessary info
+		f.write(str(date)+","+str(province)+","+str(casesOrDeath)+","+str(caseOrDeathTotal)+","+str(int(round(increaseRate)))+","+str(doublingDays)) #storing necessary info
 		f.write("\n")
 		f.close()
-	
+
+print("Data stored in storage.txt..")
 #--------------------------------------STORAGE END---------------------------------------------#
