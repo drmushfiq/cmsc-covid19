@@ -19,7 +19,7 @@ cd to the cmsc-covid19 directory:
 ``cd cmsc-covid19``
 
 - Graph Plotting:
-  - run ``python3 plots.py <whatToplot> <nameOfProvince(s)> <plotType>``
+  - Run ``python3 plots.py <whatToplot> <nameOfProvince(s)> <plotType>``
   - whatToPlot: choose one of the three values 
   		- total_cases / total_tested / cases_per_day
   - nameOfProvince(s): choose any of the following(s) 
@@ -37,7 +37,7 @@ cd to the cmsc-covid19 directory:
 
 - Animate Plots:
   - This program is used to display plot with animation
-  - run ``python3 animate.py <nameOfProvince>``
+  - Run ``python3 animate.py <nameOfProvince>``
   - nameOfProvince(s): choose any of the following(s) 
   		- ontario / british_columbia / prince_edward_island / nova_scotia / new_brunswick / quebec / manitoba / saskatchewan / alberta / newfoundland_and_labrador / yukon / northwest_territories / nunavut / repatriated_travellers 
   		- You can only choose one province 
@@ -46,11 +46,21 @@ cd to the cmsc-covid19 directory:
 	  - $ python3 animate.py ontario
 	  - $ python3 animate.py alberta 
 
-Contributors
----------------------------------------------
-`Ruhul Mashbu <https://github.com/rmashbu>`
-`Dewan Ruhul Mushfiq <https://github.com/drmushfiq>`
-`Iftekhar Masud <https://github.com/ihmasud>`
+ - Doubling rate
+ 	- Run ``python3 task5.py <codeOfProvince> <cases/death> <date>``
+ 		- codeOfProvince: choose one of the followings: (NL,PE,NS,NB,QC,ON,MB,SK,AB,YT,BC,NT,NU)
+	- Takes 3 arguments: Province code, whether to check for number of cases or deaths, Date
+	- Check "storage.txt" for result
+	- Example: ``python3 task5.py ON cases 08-04-2020``
 
-See our list of contributors `here. <https://github.com/toobigtoignore/issf/graphs/contributors>`_
+ - Plotting the doubling rate
+ 	- Run ``Task6.py``
+	- Does not require any arguments to run. It rather uses the 'storage.txt' file generated from task 5 and creates a bar graph with all instances of data that are in the storage.txt file. 
 
+ - 14days.py:
+ 	- Run ``python3 task5.py <codeOfProvince> <cases/death> <date>``
+ 		- codeOfProvince: choose one of the followings: (NL,PE,NS,NB,QC,ON,MB,SK,AB,YT,BC,NT,NU)
+ 	- Takes 3 arguments: Province code, whether to check for number of cases or deaths, Date
+ 	- Provide the prediction of cases/death after 14 days of the given date 
+	- Check "storage.txt" for result
+	- Example: ``python3 14days.py ON cases 08-04-2020``
