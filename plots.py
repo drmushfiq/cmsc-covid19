@@ -42,28 +42,6 @@ def cases_stat(province,provinceArray,caseArray):
             return caseArray[provinceArray.index(province)] 
     else: 
         return 0   
-
-
-
-
-def set_cutoff(arr, cutoff):
-    '''
-    - takes an array and cutoff point as input
-    - sets all the values to 0 until the cutoff point is reached
-    - keeps the values as it is once the cutoff point is reached
-    '''
-    foundCutoff = False  
-    result = []
-    for i in arr:
-        if foundCutoff == False:  
-            if i < cutoff:  
-                result.append(0)
-            else:
-                result.append(i)
-                foundCutoff = True
-        else:
-            result.append(i)
-    return result
 # ------------------------------------ Functions Section End ------------------------------------ #
 
 
@@ -89,7 +67,6 @@ else:
 
 data = pd.read_csv('https://health-infobase.canada.ca/src/data/covidLive/covid19.csv',sep=',')          #Download csv file
 dates = unique(data['date'])                                                                            # get unique date from dataframe
-
 
 # Declare arrays for each province
 ontario = []
@@ -199,22 +176,24 @@ dates = pd.date_range(start, end, periods=len(dates))
 
 # ---------------------------------- Set cuttoff points for each province starts ---------------------------------- #
 # execute this part only while plotting cases per day as it requires a cutoff point
+# cutoff date has been selected as 19th march 2020
 if plotName == "cases_per_day":
-    ontario = set_cutoff(ontario, 100)
-    bc = set_cutoff(bc, 30)
-    pei = set_cutoff(pei, 15)
-    ns = set_cutoff(ns, 10)
-    nb = set_cutoff(nb, 10)
-    quebec = set_cutoff(quebec, 70)
-    manitoba = set_cutoff(manitoba, 2)
-    saskatchewan = set_cutoff(saskatchewan, 4)
-    alberta = set_cutoff(alberta, 10)
-    nfld = set_cutoff(nfld, 5)
-    yukon = set_cutoff(yukon, 2)
-    nt = set_cutoff(nt, 2)
-    nunavut = set_cutoff(nunavut, 0)
-    rt = set_cutoff(rt, 3)
-    canada = set_cutoff(canada, 40)
+    ontario = ontario[40:]
+    bc = bc[40:]
+    pei = pei[40:]
+    ns = ns[40:]
+    nb = nb[40:]
+    quebec = quebec[40:]
+    manitoba = manitoba[40:]
+    saskatchewan = saskatchewan[40:]
+    alberta = alberta[40:]
+    nfld = nfld[40:]
+    yukon = yukon[40:]
+    nt = nt[40:]
+    nunavut = nunavut[40:]
+    rt = rt[40:]
+    canada = canada[40:]
+    dates = dates[40:]
 # ------------------------------------ Set cuttoff points for each province end ----------------------------------- #
                     
 
