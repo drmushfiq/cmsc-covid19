@@ -146,9 +146,11 @@ def predictTotalIn14Days(increaseRate, date, total):
 increaseRate=averageIncrease() #getting the average increaserate
 future_date, increase=predictTotalIn14Days(increaseRate,rowOfGivenDate['date'], caseOrDeathTotal) #getting the doubling days of cases from the function
 
+totalAfter14days=str(increase[-1]) #getting the last value of the list which is total after 14days
+
 #showing output
 print("Total "+casesOrDeath+" on "+str(date)+": "+str(caseOrDeathTotal))
-print("Total "+casesOrDeath+" after 14days: "+str(increase[-1]))
+print("Total "+casesOrDeath+" after 14days: "+totalAfter14days)
 
 
 #--------------------------------------DIVER PROGRAM END----------------------------------------#
@@ -178,6 +180,7 @@ plt.plot(allDates, allTotals); #plotting the combination of 7days and next 14day
 plt.plot(future_date, increase, 'o', label="predicted 14days"); #ploting predicted 14days of cases/deaths with dots
 
 
+plt.title('Total after 2 weeks: '+totalAfter14days) #setting graph title to be the total number after 14days
 plt.xticks(fontsize=8, rotation=50) #setting font and rotation for x axis
 plt.yticks(fontsize=10) #setting font for y axis
 plt.xlabel("Date", fontsize=16) #setting label x axis
