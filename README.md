@@ -54,7 +54,7 @@ cd to the cmsc-covid19 directory:
 	- Example: ``python3 task5.py ON cases 08-04-2020``
 
  - Plotting the doubling rate
- 	- Run ``Task6.py``
+ 	- Run ``task6.py``
 	- Does not require any arguments to run. It rather uses the 'storage.txt' file generated from task 5 and creates a bar graph with all instances of data that are in the storage.txt file. 
 
  - 14days.py:
