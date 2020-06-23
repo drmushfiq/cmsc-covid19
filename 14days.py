@@ -76,9 +76,9 @@ else:
 	exit(0)
 
 if(casesOrDeath=='cases'): #checking weather to get case rate or death rate
-	caseOrDeathTotal=rowOfGivenDate['numtotal'] #sum of total case increase each day
+	caseOrDeathTotal=rowOfGivenDate['numtotal'] #storing total cases if its for cases
 else:
-	caseOrDeathTotal=rowOfGivenDate['numdeaths'] #sum of total death increase each day
+	caseOrDeathTotal=rowOfGivenDate['numdeaths'] #storing total deaths if its for deaths
 
 #------------------------------------DATA PREP AND EXCEPTION HANDLING END---------------------------------------#
 
@@ -87,46 +87,48 @@ else:
 #-----------------------------------------FUNCTIONS-----------------------------------------------#
 
 
-#the function takes a dataframe as an input and returns average increase of the last 7days
+#the function calculates how much more or less cases/deaths are increasing compared to the previous day for 7days
 def averageIncrease():
-	previouseTotal=provinceDF.iloc[indexOfGivenDate-8]
-	if(casesOrDeath=='cases'):
+	previouseTotal=provinceDF.iloc[indexOfGivenDate-8] #getting the 8day before total of cases/deaths to calculate next days
+	if(casesOrDeath=='cases'): #checking weather to get case rate or death rate
 		previouseTotal=previouseTotal['numtoday']
 	else:
 		previouseTotal=previouseTotal['deathstoday']
 	increaseRate=0 #setting an initial value of increaseRate variable.
-
-	for i, row in sevenDaysDF.iterrows(): #loop to iterate over 7days of data
+	
+	#loop to iterate over 7days of data
+	for i, row in sevenDaysDF.iterrows(): 
 		if(casesOrDeath=='cases'): #checking weather to get case rate or death rate
 			increaseRate=increaseRate+(row['numtoday']-previouseTotal)
 			previouseTotal=row['numtoday']
 		else:
 			increaseRate=increaseRate+(row['deathstoday']-previouseTotal)
 			previouseTotal=row['deathstoday']
-	if(increaseRate==0): #checking if average 0
-		increaseRate=0 #setting to zero 
 	else:
-		increaseRate=increaseRate/len(sevenDaysDF) #getting the average of the increase case/death in past 7days from the given date
+		increaseRate=increaseRate/len(sevenDaysDF) #getting the average of the increase rate in past 7days from the given date
 	return int(round(increaseRate))
 
 
-#the function calculates the doubling days from the average and the current number of cases/deaths of the given date
-def predictTotalIn14Days(increaseRate, date, caseOrDeathTotal):
+#the function genarates 14days of data based on increase rate
+def predictTotalIn14Days(increaseRate, date, total):
+	#setting initial values
 	increase=[]
 	future_date=[]
 	newdate=pd.Timestamp(date).strftime('%d-%m-%Y')
-	previouseToday=provinceDF.iloc[indexOfGivenDate]
+	currentToday=provinceDF.iloc[indexOfGivenDate]
+
 	if(casesOrDeath=='cases'): #checking weather to get case rate or death rate
-		previouseToday=previouseToday['numtoday']
+		currentToday=currentToday['numtoday']
 	else:
-		previouseToday=previouseToday['deathstoday']
-	for i in range(14):
-		previouseToday=previouseToday+increaseRate
-		caseOrDeathTotal=caseOrDeathTotal+previouseToday
-		increase.append(caseOrDeathTotal)
-		#newdate=pd.Timestamp(str(newdate)) + pd.offsets.Day(1)
-		newdate=(pd.Timestamp(newdate) + pd.DateOffset(days=1))
-		future_date.append(newdate.strftime('%d-%m-%Y'))
+		currentToday=currentToday['deathstoday']
+	#loop to iterate over 14days
+	for i in range(14): 
+		currentToday=currentToday+increaseRate #adding the increase rate with the number of new cases/deaths
+		total=total+currentToday #adding the predicted new case/death with the total
+		increase.append(total) #appending each days increase in a list
+
+		newdate=(pd.Timestamp(newdate) + pd.DateOffset(days=1)) #calculating the date of current day by adding a day
+		future_date.append(newdate.strftime('%d-%m-%Y')) #appending the calculated date
 		
 	return (future_date, increase)
 
@@ -147,3 +149,42 @@ print("Total "+casesOrDeath+" after 14days: "+str(increase[-1]))
 #--------------------------------------DIVER PROGRAM END----------------------------------------#
 
 
+
+
+
+#-----------------------------------------PLOTTING DATA-----------------------------------------------#
+
+allDates=sevenDaysDF['date'].tolist()+future_date #adding the list of previous seven dates with the new 14 dates
+
+if(casesOrDeath=='cases'): #checking weather to get case rate or death rate
+	allTotals=sevenDaysDF['numtotal'].tolist()+increase #adding the list of previous total cases with the list of new cases
+else:
+	allTotals=sevenDaysDF['numdeaths'].tolist()+increase #adding the list of previous total deaths with the list of new deaths
+
+fig = plt.figure(figsize=(12,8)) #creating a figure
+
+if(casesOrDeath=='cases'): #checking weather to get case rate or death rate
+	plt.plot(sevenDaysDF['date'], sevenDaysDF['numtotal'], 'o', label="last 7days"); #ploting previous 7days cases with dots
+else:
+	plt.plot(sevenDaysDF['date'], sevenDaysDF['numdeaths'], 'o', label="last 7days"); #ploting previous 7days deaths with dots
+
+plt.plot(allDates, allTotals); #plotting the combination of 7days and next 14days with a line
+
+plt.plot(future_date, increase, 'o', label="predicted 14days"); #ploting predicted 14days of cases/deaths with dots
+
+
+plt.xticks(fontsize=8, rotation=50) #setting font and rotation for x axis
+plt.yticks(fontsize=10) #setting font for y axis
+plt.xlabel("Date", fontsize=16) #setting label x axis
+plt.legend(loc="upper left") #setting location of legends
+
+if(casesOrDeath=='cases'): #checking weather to get case rate or death rate
+	plt.ylabel('Number of cases', fontsize=16) #setting label for cases
+else:
+	plt.ylabel('Number of deaths', fontsize=16) #setting label for deaths
+
+plt.show() #show the plot
+plt.savefig('14daysPrediction') #save the plot in 14daysPrediction.png
+
+
+#-----------------------------------------PLOTTING DATA END-----------------------------------------------#

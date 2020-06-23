@@ -76,9 +76,9 @@ else:
 	exit(0)
 
 if(casesOrDeath=='cases'): #checking weather to get case rate or death rate
-	caseOrDeathTotal=rowOfGivenDate['numtotal'] #sum of total case increase each day
+	caseOrDeathTotal=rowOfGivenDate['numtotal'] #storing total cases if its for cases
 else:
-	caseOrDeathTotal=rowOfGivenDate['numdeaths'] #sum of total death increase each day
+	caseOrDeathTotal=rowOfGivenDate['numdeaths'] #storing total deaths if its for deaths
 
 #------------------------------------DATA PREP AND EXCEPTION HANDLING END---------------------------------------#
 

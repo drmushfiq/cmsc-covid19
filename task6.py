@@ -34,8 +34,9 @@ for i, row in doublingDays.iterrows():
 
 plt.title('Days to double') #setting graph title
 plt.ylabel('Days') #y axis label
-plt.show()
-plt.savefig('doublingdays') #saving the figure
+plt.show() #showing the plot
+
+plt.savefig('doublingdays') #saving the figure as doublingdays.png
 
 
 #------------------------------------DATA PLOTTING END------------------------------------#
