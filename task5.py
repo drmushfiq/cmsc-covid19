@@ -164,5 +164,5 @@ else:
 		f.write("\n")
 		f.close()
 
-print("Data stored in storage.txt..")
+print("Data stored in storage.txt..") #showing output
 #--------------------------------------STORAGE END---------------------------------------------#
