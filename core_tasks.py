@@ -49,7 +49,12 @@ def set_cutoff(arr, cutoff):
 
 
 plotName = sys.argv[1]
-placeName = sys.argv[2]
+placesList = []
+if len(sys.argv) > 2: 
+	placesList = sys.argv[2].split(",")
+	for i in range(0,len(placesList),1):
+		placesList[i] = placesList[i].strip()
+
 if len(sys.argv) > 3: 
 	plotType = sys.argv[3]
 else: 
@@ -177,54 +182,69 @@ if plotName == "cases_per_day":
 
 
 
+plottedYVals = []
 # plot results of provinces
-fig = plt.figure(figsize=(15,10))
+fig = plt.figure(figsize=(10,10))
 
 if plotType == "bar":
     plt.style.use('ggplot')
-    if placeName.lower() == "ontario":
+    if "ontario" in placesList:
     	plt.bar(dates, ontario, color='#D35400', width=1, edgecolor='black', label="Ontario")
+    	plottedYVals.append(max(ontario))
     
-    elif placeName.lower() == "british_columbia":
+    if "british_columbia" in placesList:
     	plt.bar(dates, bc, color='#FF8850', width=1, edgecolor='black', label="British Columbia")
+    	plottedYVals.append(max(bc))
     
-    elif placeName.lower() == "prince_edward_island":
+    if "prince_edward_island" in placesList:
     	plt.bar(dates, pei, color='#FFD500', width=1, edgecolor='black', label="Prince Edward Island")
+    	plottedYVals.append(max(pei))
     
-    elif placeName.lower() == "nova_scotia":
+    if "nova_scotia" in placesList:
     	plt.bar(dates, ns, color='#5FA30D', width=1, edgecolor='black', label="Nova Scotia")
+    	plottedYVals.append(max(ns))
     
-    elif placeName.lower() == "new_brunswick":
+    if "new_brunswick" in placesList:
     	plt.bar(dates, nb, color='#15F518', width=1, edgecolor='black', label="New Brunswick")
+    	plottedYVals.append(max(nb))
     
-    elif placeName.lower() == "quebec":
+    if "quebec" in placesList:
     	plt.bar(dates, quebec, color='#00FFF7', width=1, edgecolor='black', label="Quebec")
+    	plottedYVals.append(max(quebec))
     
-    elif placeName.lower() == "manitoba":
+    if "manitoba" in placesList:
     	plt.bar(dates, manitoba, color='#00A2FF', width=1, edgecolor='black', label="Manitoba")
+    	plottedYVals.append(max(manitoba))
     
-    elif placeName.lower() == "saskatchewan":
+    if "saskatchewan" in placesList:
     	plt.bar(dates, saskatchewan, color='#001BFF', width=1, edgecolor='black', label="Saskatchewan")
+    	plottedYVals.append(max(saskatchewan))
     
-    elif placeName.lower() == "alberta":
+    if "alberta" in placesList:
     	plt.bar(dates, alberta, color='#C900FF', width=1, edgecolor='black', label="Alberta")
+    	plottedYVals.append(max(alberta))
     
-    elif placeName.lower() == "newfoundland_and_labrador":
+    if "newfoundland_and_labrador" in placesList:
     	plt.bar(dates, nfld, color='#FF00E4', width=1, edgecolor='black', label="Newfoundland and Labrador")
+    	plottedYVals.append(max(nfld))
     
-    elif placeName.lower() == "yukon":
+    if "yukon" in placesList:
     	plt.bar(dates, yukon, color='#935116', width=1, edgecolor='black', label="Yukon")
+    	plottedYVals.append(max(yukon))
     
-    elif placeName.lower() == "northwest_territories":
+    if "northwest_territories" in placesList:
     	plt.bar(dates, nt, color='#839192', width=1, edgecolor='black', label="Northwest Territories")
+    	plottedYVals.append(max(nt))
     
-    elif placeName.lower() == "nunavut":
+    if "nunavut" in placesList:
     	plt.bar(dates, nunavut, color='#000000', width=1, edgecolor='black', label="Nunavut")
+    	plottedYVals.append(max(nunavut))
     
-    elif placeName.lower() == "repatriated_travellers":
+    if "repatriated_travellers" in placesList:
     	plt.bar(dates, rt, color='#FF0000', width=1, edgecolor='black', label="Repatriated Travellers")
+    	plottedYVals.append(max(rt))
     
-    else:
+    if "all" in placesList or len(placesList) == 0:
     	plt.bar(dates, ontario, color='#D35400', width=1, edgecolor='black', label="Ontario")
     	plt.bar(dates, bc, color='#FF8850', width=1, edgecolor='black', label="British Columbia")
     	plt.bar(dates, pei, color='#FFD500', width=1, edgecolor='black', label="Prince Edward Island")
@@ -239,72 +259,88 @@ if plotType == "bar":
     	plt.bar(dates, nt, color='#839192', width=1, edgecolor='black', label="Northwest Territories")
     	plt.bar(dates, nunavut, color='#000000', width=1, edgecolor='black', label="Nunavut")
     	plt.bar(dates, rt, color='#FF0000', width=1, edgecolor='black', label="Repatriated Travellers")
+
+    	plottedYVals.append(max(max(ontario), max(bc), max(pei), max(ns), max(nb), max(quebec), max(manitoba), 
+		  max(saskatchewan), max(alberta), max(nfld), max(yukon), max(nt), max(nunavut), max(rt)))
 
 
 elif plotType == "line":
-    if placeName.lower() == "ontario":
+    if "ontario" in placesList:
     	plt.plot(dates, ontario, color='#D35400', label="Ontario")
+    	plottedYVals.append(max(ontario))
     
-    elif placeName.lower() == "british_columbia":
+    if "british_columbia" in placesList:
     	plt.plot(dates, bc, color='#FF8850', label="British Columbia")
+    	plottedYVals.append(max(bc))
     
-    elif placeName.lower() == "prince_edward_island":
+    if "prince_edward_island" in placesList:
     	plt.plot(dates, pei, color='#FFD500', label="Prince Edward Island")
+    	plottedYVals.append(max(pei))
     
-    elif placeName.lower() == "nova_scotia":
+    if "nova_scotia" in placesList:
     	plt.plot(dates, ns, color='#5FA30D', label="Nova Scotia")
+    	plottedYVals.append(max(ns))
     
-    elif placeName.lower() == "new_brunswick":
+    if "new_brunswick" in placesList:
     	plt.plot(dates, nb, color='#15F518', label="New Brunswick")
+    	plottedYVals.append(max(nb))
     
-    elif placeName.lower() == "quebec":
+    if "quebec" in placesList:
     	plt.plot(dates, quebec, color='#00FFF7', label="Quebec")
+    	plottedYVals.append(max(quebec))
     
-    elif placeName.lower() == "manitoba":
+    if "manitoba" in placesList:
     	plt.plot(dates, manitoba, color='#00A2FF', label="Manitoba")
+    	plottedYVals.append(max(manitoba))
     
-    elif placeName.lower() == "saskatchewan":
+    if "saskatchewan" in placesList:
     	plt.plot(dates, saskatchewan, color='#001BFF', label="Saskatchewan")
+    	plottedYVals.append(max(saskatchewan))
     
-    elif placeName.lower() == "alberta":
+    if "alberta" in placesList:
     	plt.plot(dates, alberta, color='#C900FF', label="Alberta")
+    	plottedYVals.append(max(alberta))
     
-    elif placeName.lower() == "newfoundland_and_labrador":
+    if "newfoundland_and_labrador" in placesList:
     	plt.plot(dates, nfld, color='#FF00E4', label="Newfoundland and Labrador")
+    	plottedYVals.append(max(nfld))
     
-    elif placeName.lower() == "yukon":
+    if "yukon" in placesList:
     	plt.plot(dates, yukon, color='#935116', label="Yukon")
+    	plottedYVals.append(max(yukon))
     
-    elif placeName.lower() == "northwest_territories":
+    if "northwest_territories" in placesList:
     	plt.plot(dates, nt, color='#839192', label="Northwest Territories")
+    	plottedYVals.append(max(nt))
     
-    elif placeName.lower() == "nunavut":
+    if "nunavut" in placesList:
     	plt.plot(dates, nunavut, color='#000000', label="Nunavut")
+    	plottedYVals.append(max(nunavut))
     
-    elif placeName.lower() == "repatriated_travellers":
+    if "repatriated_travellers" in placesList:
+    	plt.plot(dates, rt, color='#FF0000', label="Repatriated Travellers")
+    	plottedYVals.append(max(rt))
+
+    if "all" in placesList or len(placesList) == 0:
+    	plt.plot(dates, ontario, color='#D35400', label="Ontario")
+    	plt.plot(dates, bc, color='#FF8850', label="British Columbia")
+    	plt.plot(dates, pei, color='#FFD500', label="Prince Edward Island")
+    	plt.plot(dates, ns, color='#5FA30D', label="Nova Scotia")
+    	plt.plot(dates, nb, color='#15F518', label="New Brunswick")
+    	plt.plot(dates, quebec, color='#00FFF7', label="Quebec")
+    	plt.plot(dates, manitoba, color='#00A2FF', label="Manitoba")
+    	plt.plot(dates, saskatchewan, color='#001BFF', label="Saskatchewan")
+    	plt.plot(dates, alberta, color='#C900FF', label="Alberta")
+    	plt.plot(dates, nfld, color='#FF00E4', label="Newfoundland and Labrador")
+    	plt.plot(dates, yukon, color='#935116', label="Yukon")
+    	plt.plot(dates, nt, color='#839192', label="Northwest Territories")
+    	plt.plot(dates, nunavut, color='#000000', label="Nunavut")
     	plt.plot(dates, rt, color='#FF0000', label="Repatriated Travellers")
 
-    else:
-    	plt.plot(dates, ontario, color='#D35400', label="Ontario")
-    	plt.plot(dates, bc, color='#FF8850', label="British Columbia")
-    	plt.plot(dates, pei, color='#FFD500', label="Prince Edward Island")
-    	plt.plot(dates, ns, color='#5FA30D', label="Nova Scotia")
-    	plt.plot(dates, nb, color='#15F518', label="New Brunswick")
-    	plt.plot(dates, quebec, color='#00FFF7', label="Quebec")
-    	plt.plot(dates, manitoba, color='#00A2FF', label="Manitoba")
-    	plt.plot(dates, saskatchewan, color='#001BFF', label="Saskatchewan")
-    	plt.plot(dates, alberta, color='#C900FF', label="Alberta")
-    	plt.plot(dates, nfld, color='#FF00E4', label="Newfoundland and Labrador")
-    	plt.plot(dates, yukon, color='#935116', label="Yukon")
-    	plt.plot(dates, nt, color='#839192', label="Northwest Territories")
-    	plt.plot(dates, nunavut, color='#000000', label="Nunavut")
-    	plt.plot(dates, rt, color='#FF0000', label="Repatriated Travellers")
+    	plottedYVals.append(max(max(ontario), max(bc), max(pei), max(ns), max(nb), max(quebec), max(manitoba), 
+    			  max(saskatchewan), max(alberta), max(nfld), max(yukon), max(nt), max(nunavut), max(rt)))
 
 
-plt.xlabel("Dates", fontsize="14")
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d-%b-%y'))
-plt.gcf().axes[0].yaxis.get_major_formatter().set_scientific(False)
-plt.legend()
 
 if plotType == "line":
 	plt.grid()
@@ -312,15 +348,23 @@ elif plotType == "bar":
 	plt.grid(color='w', linestyle='solid')
 
 if plotName == "total_cases": 
-	plt.ylabel("Number of Total Cases", fontsize="14")
 	plt.title("Number of Total Cases over Time", fontsize="20", color="black")
+	plt.ylabel("Number of Total Cases", fontsize="14")
 
 elif plotName == "total_tested": 
-	plt.ylabel("Number of Tests", fontsize="14")
 	plt.title("Number of Tests over Time", fontsize="20", color="black")
+	plt.ylabel("Number of Tests", fontsize="14")
 
 elif plotName == "cases_per_day": 
-	plt.ylabel("Number of New Cases", fontsize="14")
 	plt.title("Number of New Cases over Time", fontsize="20", color="black")
+	plt.ylabel("Number of New Cases", fontsize="14")
 
+plt.xlabel("Dates", fontsize="14")
+
+yTickHighestValue = int(math.ceil(max(plottedYVals) / 10.0)) * 10
+yTicks = np.arange(0,yTickHighestValue,yTickHighestValue/10)
+plt.yticks(yTicks)
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d-%b-%y'))
+plt.gcf().axes[0].yaxis.get_major_formatter().set_scientific(False)
+plt.legend()
 plt.show()
