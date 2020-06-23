@@ -411,7 +411,7 @@ plt.xlabel("Dates", fontsize="14")
 plt.xticks(rotation=45)                                                         # rotate x ticks by 45deg
 plt.ylim(ymin=0)                                                                # y axis starts from zero
 yTickHighestValue = int(math.ceil(max(plottedYVals) / 10.0)) * 10               # get the highest value of all provinces on y axis 
-yTickHighestValue += yTickHighestValue/10
+yTickHighestValue += yTickHighestValue/10                                       # add one more tick as the initial tick starts from 0
 yTicks = np.arange(0,yTickHighestValue,yTickHighestValue/10)                    # create an array from 0 to highest y with stepsize yMax/10
 plt.yticks(np.round(yTicks))                                                    # set 10 ticks on y axis
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d-%b-%y'))           # format date on x axis
